@@ -4,6 +4,7 @@ document.getElementById("canvas").width =  window.innerHeight - 10 // size the c
 ctx = document.getElementById("canvas").getContext("2d") // redefine ctx
 pixelsize = document.getElementById("canvas").width / 300 // define the size of  pixel all sizes are based around this
 canvas = document.getElementById("canvas")
+ctx.font = 100*pixelsize + "px Arial"
 document.addEventListener('keydown', (event) => {
     if (event.key == 'Enter') {
         enter = true
@@ -18,26 +19,28 @@ goalImg = new Image()
 goalImgIndex = Math.floor(Math.random()*words.length)
 goalImg.src = "images/" + words[goalImgIndex].split(",")[0] + ".png"
 document.getElementById("mission").innerHTML = "haere  ki te " + words[goalImgIndex].split(",")[1]
-possiblePhonyWords = words
+possiblePhonyWords = [...words]
 possiblePhonyWords.splice(goalImgIndex,1)
 phonyGoals = [[Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image] , [Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image],[Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image] , [Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image]]
 obstacals = []
 while (phonyGoals[0][0] == x || phonyGoals[0][1] == y || phonyGoals[0][0] == goalx || phonyGoals[0][1] == goaly || phonyGoals[1][0] == x || phonyGoals[1][1] == y || phonyGoals[1][0] == goalx || phonyGoals[1][1] == goaly){
     phonyGoals = [[Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image] , [Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image],[Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image] , [Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image]]
 }
-phonyGoals[0][2].src = "images/" + possiblePhonyWords[Math.floor(Math.random()*words.length)].split(",")[0] + ".png"
-phonyGoals[1][2].src = "images/" + possiblePhonyWords[Math.floor(Math.random()*words.length)].split(",")[0] + ".png"
+phonyGoals[0][2].src = "images/" + possiblePhonyWords[Math.floor(Math.random()*possiblePhonyWords.length)].split(",")[0] + ".png"
+phonyGoals[1][2].src = "images/" + possiblePhonyWords[Math.floor(Math.random()*possiblePhonyWords.length)].split(",")[0] + ".png"
 for(i = 0; i < 10; i ++){
     obstacals.push([Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,Math.round(Math.random()),Math.round(Math.random()*14)*20])
 }
 enter = false
 score = 0
 health = 3
-time = 10
+time = 5
 gameover = false
 nextToObstical = false
 bombCharged = false
 bomb = new Audio("Explosion.wav")
+win = new Audio("correct.wav")
+loss = new Audio("wrong.wav")
 function loop(){
     if(!gameover){
         ctx.clearRect(0,0,600*pixelsize,600*pixelsize)
@@ -57,43 +60,57 @@ function loop(){
         ctx.drawImage(phonyGoals[0][2],phonyGoals[0][0]*pixelsize,phonyGoals[0][1]*pixelsize,20*pixelsize,20*pixelsize)
         ctx.drawImage(phonyGoals[1][2],phonyGoals[1][0]*pixelsize,phonyGoals[1][1]*pixelsize,20*pixelsize,20*pixelsize)
         if(x == goalx && y == goaly){
+            win.play()
             goalx = Math.round(Math.random()*14)*20
             goaly = Math.round(Math.random()*14)*20
             goalImgIndex = Math.floor(Math.random()*words.length)
             goalImg.src = "images/" + words[goalImgIndex].split(",")[0] + ".png"
             document.getElementById("mission").innerHTML = "haere  ki te " + words[goalImgIndex].split(",")[1]
-            possiblePhonyWords = words
+            possiblePhonyWords = [...words]
             possiblePhonyWords.splice(goalImgIndex,1)
             phonyGoals = [[Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image] , [Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image],[Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image] , [Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image]]
             obstacals = []
             while (phonyGoals[0][0] == x || phonyGoals[0][1] == y || phonyGoals[0][0] == goalx || phonyGoals[0][1] == goaly || phonyGoals[1][0] == x || phonyGoals[1][1] == y || phonyGoals[1][0] == goalx || phonyGoals[1][1] == goaly){
                 phonyGoals = [[Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image] , [Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image],[Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image] , [Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image]]
             }
-            phonyGoals[0][2].src = "images/" + possiblePhonyWords[Math.floor(Math.random()*words.length)].split(",")[0] + ".png"
-            phonyGoals[1][2].src = "images/" + possiblePhonyWords[Math.floor(Math.random()*words.length)].split(",")[0] + ".png"
-            score += 1
+            phonyGoals[0][2].src = "images/" + possiblePhonyWords[Math.floor(Math.random()*possiblePhonyWords.length)].split(",")[0] + ".png"
+            phonyGoals[1][2].src = "images/" + possiblePhonyWords[Math.floor(Math.random()*possiblePhonyWords.length)].split(",")[0] + ".png"
+            ctx.fillStyle = "green"
+            if(time > 4){
+                score += 3
+                ctx.fillText("+3", 100*pixelsize, 100*pixelsize)
+            }else if(time > 3){
+                score += 2
+                ctx.fillText("+2", 100*pixelsize, 100*pixelsize)
+            }else if(score > 0){
+                score += 1
+                ctx.fillText("+1", 100*pixelsize, 100*pixelsize)
+            }
+            ctx.fillStyle = "black"
             document.getElementById("score").innerHTML = String(score)
             obstacals = []
             for(i = 0; i < 10; i ++){
                 obstacals.push([Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,Math.round(Math.random()),Math.round(Math.random()*14)*20])
             }
             bombCharged = false
+            time = 5
         }
         if((x == phonyGoals[0][0] && y == phonyGoals[0][1])||(x == phonyGoals[1][0] && y == phonyGoals[1][1])){
+            loss.play()
             goalx = Math.round(Math.random()*14)*20
             goaly = Math.round(Math.random()*14)*20
             goalImgIndex = Math.floor(Math.random()*words.length)
             goalImg.src = "images/" + words[goalImgIndex].split(",")[0] + ".png"
             document.getElementById("mission").innerHTML = "haere  ki te " + words[goalImgIndex].split(",")[1]
-            possiblePhonyWords = words
+            possiblePhonyWords = [...words]
             possiblePhonyWords.splice(goalImgIndex,1)
             phonyGoals = [[Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image] , [Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image],[Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image] , [Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image]]
             obstacals = []
             while (phonyGoals[0][0] == x || phonyGoals[0][1] == y || phonyGoals[0][0] == goalx || phonyGoals[0][1] == goaly || phonyGoals[1][0] == x || phonyGoals[1][1] == y || phonyGoals[1][0] == goalx || phonyGoals[1][1] == goaly){
                 phonyGoals = [[Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image] , [Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image],[Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image] , [Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,new Image]]
             }
-            phonyGoals[0][2].src = "images/" + possiblePhonyWords[Math.floor(Math.random()*words.length)].split(",")[0] + ".png"
-            phonyGoals[1][2].src = "images/" + possiblePhonyWords[Math.floor(Math.random()*words.length)].split(",")[0] + ".png"
+            phonyGoals[0][2].src = "images/" + possiblePhonyWords[Math.floor(Math.random()*possiblePhonyWords.length)].split(",")[0] + ".png"
+            phonyGoals[1][2].src = "images/" + possiblePhonyWords[Math.floor(Math.random()*possiblePhonyWords.length)].split(",")[0] + ".png"
             health -= 1
             document.getElementById("health").innerHTML = String(health)
             obstacals = []
@@ -101,6 +118,7 @@ function loop(){
                 obstacals.push([Math.round(Math.random()*14)*20,Math.round(Math.random()*14)*20,Math.round(Math.random()),Math.round(Math.random()*14)*20])
             }
             bombCharged = false
+            time = 5
         }
         if(left){
             for(i = 0; i < obstacals.length; i++){
@@ -162,6 +180,17 @@ function loop(){
             if(!nextToObstical){
                 y += 20
             }
+        }
+        if(space){
+            score -= 1
+            bombCharged = true
+        }
+        if(health == 0){
+            document.getElementById("body").innerHTML = "kāti i konei. tatau: " + score
+        }
+        if(time > 0){
+            time -= 0.1
+            document.getElementById("time").innerHTML = Math.ceil(time)
         }
     }
 }

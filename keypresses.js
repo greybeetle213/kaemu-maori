@@ -3,7 +3,7 @@ var right = false
 var down = false
 var up = false
 var enter = false
-var keyX = false
+var space = false
 var keyZ = false
 
 document.addEventListener('keydown', (event) => {
@@ -48,13 +48,13 @@ document.addEventListener('keyup', (event) => {
     }
 })
 document.addEventListener('keydown', (event) => {
-    if (event.key == 'x') {
-        keyX = true
+    if (event.key == ' ') {
+        space = true
     }
 })
 document.addEventListener('keyup', (event) => {
-    if (event.key == 'x') {
-        keyX = false
+    if (event.key == ' ') {
+        space = false
     }
 })
 document.addEventListener('keydown', (event) => {
