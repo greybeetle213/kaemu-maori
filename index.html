@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>maori_game</title>
+</head>
+<body style="background-color: #dddddd; "margin: 0; padding: 0;" id="body">
+    <canvas id="canvas" style="background-color: white; position: absolute;"></canvas>
+    <div style="position: absolute; right: 0%;">
+        <button onclick="if(bombCharged == false){bombCharged = true}">Whakareritia pomu</button>
+        tatau: <span id="score">0</span>
+        <br>
+        ora: <span id = "health">3</span>
+    </div> 
+    <span id="mission" style="position: absolute; font-size: 50px;">haere ki te mea</span>
+    <script src="keypresses.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
